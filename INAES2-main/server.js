@@ -8,7 +8,10 @@ const app = express();
 const port = 5000;
 
 // Configuración de CORS
-app.use(cors());
+app.use(cors({
+    origin: 'https://inaest-front.vercel.app',  // Cambia por la URL de tu frontend
+    methods: ['GET', 'POST'],
+}));
 
 // Configuración de multer para el manejo de archivos
 const upload = multer({
