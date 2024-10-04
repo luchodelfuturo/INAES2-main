@@ -9,15 +9,23 @@ const port = process.env.PORT || 3001;
 
 // Configuración de CORS
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'https://inaest-front.vercel.app',  // URL dinámica según el entorno
+    origin: ['https://inaest-front.vercel.app'],
     methods: ['GET', 'POST'],
+    allowedHeaders: ['Content-Type'],
+    credentials: true
 };
-
 app.use(cors(corsOptions));
 
-// Configuración de multer para el manejo de archivos
+// Aumentar el límite de carga en Express
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Configuración de multer para el manejo de archivos, con límite de tamaño
 const upload = multer({
     storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024  // Límite de 10MB por archivo
+    }
 });
 
 // Middleware para servir archivos estáticos
@@ -29,6 +37,7 @@ app.use('/generated_files', express.static(path.join(__dirname, 'generated_files
     }
 }));
 
+// Ruta para manejar la carga de archivos
 app.post('/api/upload', upload.fields([{ name: 'socios' }, { name: 'prestamos' }]), async (req, res) => {
     console.log("Llegó al upload");
 
@@ -57,4 +66,3 @@ app.post('/api/upload', upload.fields([{ name: 'socios' }, { name: 'prestamos' }
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
-
