@@ -7,18 +7,24 @@ const { procesarArchivos } = require('./procesarArchivos');
 const app = express();
 const port = process.env.PORT || 3001;
 
-// Configuración de CORS
-const corsOptions = {
-    origin: ['https://inaest-front.vercel.app'],
-    methods: ['GET', 'POST'],
-    allowedHeaders: ['Content-Type'],
-    credentials: true
-};
-app.use(cors(corsOptions));
+// Configuración de CORS correcta
+// Middleware CORS
+app.use(cors({
+    origin: 'https://inaest-front.vercel.app',
+    methods: ['GET', 'POST', 'OPTIONS'],  // Agregar 'OPTIONS' por si se requiere en preflight requests
+    allowedHeaders: ['Content-Type', 'Authorization'],  // Puedes agregar más si tu solicitud necesita más cabeceras
+    credentials: true,
+    optionsSuccessStatus: 200  // Algunas veces ayuda con navegadores antiguos
+}));
 
 // Aumentar el límite de carga en Express
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
+// Ruta de prueba para verificar la conexión
+app.get('/api/test', (req, res) => {
+    res.json({ message: 'Conexión exitosa con el backend!' });
+});
 
 // Configuración de multer para el manejo de archivos, con límite de tamaño
 const upload = multer({
