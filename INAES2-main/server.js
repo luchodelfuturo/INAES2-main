@@ -5,13 +5,15 @@ const cors = require('cors');
 const { procesarArchivos } = require('./procesarArchivos');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 3001;
 
 // Configuración de CORS
-app.use(cors({
-    origin: 'https://inaest-front.vercel.app',  // Cambia por la URL de tu frontend
+const corsOptions = {
+    origin: process.env.FRONTEND_URL || 'https://inaest-front.vercel.app',  // URL dinámica según el entorno
     methods: ['GET', 'POST'],
-}));
+};
+
+app.use(cors(corsOptions));
 
 // Configuración de multer para el manejo de archivos
 const upload = multer({
